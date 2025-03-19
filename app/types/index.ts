@@ -18,6 +18,7 @@ export interface LeadFormData {
   firstName: string;
   lastName: string;
   email: string;
+  citizenship: string;
   linkedinProfile: string;
   visasOfInterest: string[];
   resume?: File;
