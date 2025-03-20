@@ -48,74 +48,120 @@ export const StyledLeadManagement = {
     color: #111827;
   `,
 
-  Controls: styled.div`
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+  UserSection: styled.div`
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 250px;
+    padding: 1rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: #ffffff;
   `,
 
-  Search: styled.input`
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 1px solid #e5e7eb;
+  UserButton: styled.button`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
     border-radius: 0.5rem;
-    background-color: #ffffff;
+    border: none;
+    background: transparent;
+    cursor: pointer;
 
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    &:hover {
+      background-color: #f3f4f6;
     }
   `,
 
-  StatusFilter: styled.select`
-    padding: 0.75rem 2.5rem 0.75rem 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    background-color: #ffffff;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25em;
+  UserAvatar: styled.div`
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #6b7280;
+  `,
 
-    &:focus {
-      outline: none;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  UserInfo: styled.div`
+    text-align: left;
+  `,
+
+  UserName: styled.div`
+    font-weight: 500;
+    color: #111827;
+  `,
+
+  UserEmail: styled.div`
+    font-size: 0.875rem;
+    color: #6b7280;
+  `,
+
+  UserDropdown: styled.div<{ isOpen: boolean }>`
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    display: ${(props) => (props.isOpen ? "block" : "none")};
+  `,
+
+  LogoutButton: styled.button`
+    width: 100%;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: none;
+    background: transparent;
+    color: #dc2626;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f3f4f6;
     }
   `,
 
   Table: styled.table`
     width: 100%;
     background-color: #ffffff;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     border: 1px solid #e5e7eb;
+    border-spacing: 0;
   `,
 
   Th: styled.th`
-    padding: 0.75rem 1rem;
+    padding: 0.875rem 1.5rem;
     text-align: left;
-    color: #374151;
+    color: #6b7280;
     font-weight: 500;
+    font-size: 0.875rem;
     border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
+    white-space: nowrap;
 
-    &:hover {
-      background-color: #f9fafb;
+    &:first-child {
+      padding-left: 1.5rem;
     }
   `,
 
   Td: styled.td`
-    padding: 1rem;
+    padding: 1rem 1.5rem;
     color: #111827;
     border-bottom: 1px solid #e5e7eb;
+    font-size: 0.875rem;
+
+    &:first-child {
+      padding-left: 1.5rem;
+    }
   `,
 
   Status: styled.span<{ status: "PENDING" | "REACHED_OUT" }>`
-    padding: 0.25rem 0.75rem;
+    padding: 0.375rem 0.75rem;
     border-radius: 1rem;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 500;
     ${(props) =>
       props.status === "PENDING"
@@ -123,22 +169,59 @@ export const StyledLeadManagement = {
         : "background-color: #D1FAE5; color: #065F46;"}
   `,
 
+  Controls: styled.div`
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  `,
+
+  Search: styled.input`
+    flex: 1;
+    max-width: 24rem;
+    padding: 0.625rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+  `,
+
+  StatusFilter: styled.select`
+    padding: 0.625rem 2rem 0.625rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    color: #111827;
+  `,
+
   Pagination: styled.div`
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.25rem;
     margin-top: 1.5rem;
+    padding: 0 1rem;
   `,
 
   PageButton: styled.button<{ active?: boolean }>`
-    padding: 0.5rem 0.75rem;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid #e5e7eb;
     border-radius: 0.375rem;
     background-color: ${(props) => (props.active ? "#111827" : "#FFFFFF")};
     color: ${(props) => (props.active ? "#FFFFFF" : "#374151")};
+    font-size: 0.875rem;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: ${(props) => (props.active ? "#111827" : "#F3F4F6")};
     }
 

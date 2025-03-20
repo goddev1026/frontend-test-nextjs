@@ -14,13 +14,14 @@ export default function LeadManagement() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { items: leads, status, error } = useSelector((state: RootState) => state.leads);
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Lead>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
   const ITEMS_PER_PAGE = 8;
 
@@ -68,8 +69,8 @@ export default function LeadManagement() {
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
+      const aValue = a[sortField] as string | number;
+      const bValue = b[sortField] as string | number;
       const direction = sortDirection === 'asc' ? 1 : -1;
       return aValue < bValue ? -1 * direction : 1 * direction;
     });
@@ -94,8 +95,26 @@ export default function LeadManagement() {
         <S.Logo>
           <Image src="/alma-logo.svg" alt="Alma" width={80} height={32} />
         </S.Logo>
-        <S.NavItem active>Leads</S.NavItem>
-        <S.NavItem>Settings</S.NavItem>
+        <S.NavItem active={true}>Leads</S.NavItem>
+        <S.NavItem active={false}>Settings</S.NavItem>
+
+        <S.UserSection>
+          <S.UserButton onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}>
+            <S.UserAvatar>
+              {user?.name?.charAt(0) || 'A'}
+            </S.UserAvatar>
+            <S.UserInfo>
+              <S.UserName>{user?.name || 'Admin User'}</S.UserName>
+              <S.UserEmail>{user?.email || 'admin@example.com'}</S.UserEmail>
+            </S.UserInfo>
+          </S.UserButton>
+
+          <S.UserDropdown isOpen={isUserDropdownOpen}>
+            <S.LogoutButton onClick={handleLogout}>
+              Sign out
+            </S.LogoutButton>
+          </S.UserDropdown>
+        </S.UserSection>
       </S.Sidebar>
 
       <S.Main>
@@ -106,7 +125,7 @@ export default function LeadManagement() {
         <S.Controls>
           <S.Search
             type="text"
-            placeholder="Search"
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -114,19 +133,27 @@ export default function LeadManagement() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">All Status</option>
-            <option value="PENDING">Pending</option>
-            <option value="REACHED_OUT">Reached Out</option>
+            <option value="all">Status: All</option>
+            <option value="PENDING">Status: Pending</option>
+            <option value="REACHED_OUT">Status: Reached Out</option>
           </S.StatusFilter>
         </S.Controls>
 
         <S.Table>
           <thead>
             <tr>
-              <S.Th onClick={() => handleSort('firstName')}>Name</S.Th>
-              <S.Th onClick={() => handleSort('createdAt')}>Submitted</S.Th>
-              <S.Th onClick={() => handleSort('status')}>Status</S.Th>
-              <S.Th onClick={() => handleSort('citizenship')}>Country</S.Th>
+              <S.Th onClick={() => handleSort('firstName')}>
+                Name {sortField === 'firstName' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </S.Th>
+              <S.Th onClick={() => handleSort('createdAt')}>
+                Submitted {sortField === 'createdAt' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </S.Th>
+              <S.Th onClick={() => handleSort('status')}>
+                Status {sortField === 'status' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </S.Th>
+              <S.Th onClick={() => handleSort('citizenship')}>
+                Country {sortField === 'citizenship' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </S.Th>
               <S.Th>Actions</S.Th>
             </tr>
           </thead>
@@ -134,7 +161,13 @@ export default function LeadManagement() {
             {paginatedLeads.map((lead) => (
               <tr key={lead.id}>
                 <S.Td>{lead.firstName} {lead.lastName}</S.Td>
-                <S.Td>{new Date(lead.createdAt).toLocaleString()}</S.Td>
+                <S.Td>{new Date(lead.createdAt).toLocaleString(undefined, {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}</S.Td>
                 <S.Td>
                   <S.Status status={lead.status}>
                     {lead.status}
@@ -161,7 +194,7 @@ export default function LeadManagement() {
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
           >
-            Previous
+            ←
           </S.PageButton>
           {Array.from({ length: totalPages }, (_, i) => (
             <S.PageButton
@@ -176,7 +209,7 @@ export default function LeadManagement() {
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
           >
-            Next
+            →
           </S.PageButton>
         </S.Pagination>
       </S.Main>
