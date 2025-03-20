@@ -4,38 +4,35 @@ import { useEffect, useState } from 'react';
 import { Lead } from '../types';
 import { leadService } from '../services/leadService';
 import { useAuth } from '../contexts/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { fetchLeads, updateLeadStatus } from '../store/features/leadsSlice';
 
 export default function LeadManagement() {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const { items: leads, status, error } = useSelector((state: RootState) => state.leads);
   const { logout } = useAuth();
 
   useEffect(() => {
-    loadLeads();
-  }, []);
-
-  const loadLeads = async () => {
-    try {
-      const data = await leadService.getLeads();
-      setLeads(data);
-    } catch (error) {
-      console.error('Error loading leads:', error);
-    } finally {
-      setIsLoading(false);
+    if (status === 'idle') {
+      dispatch(fetchLeads());
     }
-  };
+  }, [status, dispatch]);
 
   const handleStatusUpdate = async (id: string, newStatus: Lead['status']) => {
     try {
-      await leadService.updateLeadStatus(id, newStatus);
-      loadLeads(); // Reload leads after update
+      await dispatch(updateLeadStatus({ id, status: newStatus })).unwrap();
     } catch (error) {
       console.error('Error updating lead status:', error);
     }
   };
 
-  if (isLoading) {
+  if (status === 'loading') {
     return <div className="p-6">Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div className="p-6">Error: {error}</div>;
   }
 
   return (
@@ -85,8 +82,8 @@ export default function LeadManagement() {
                 <td className="px-6 py-4">
                   <span
                     className={`px-2 py-1 rounded text-sm ${lead.status === 'PENDING'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-green-100 text-green-800'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-green-100 text-green-800'
                       }`}
                   >
                     {lead.status}

@@ -1,7 +1,9 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { AuthUser } from '../types';
+import { Provider } from "react-redux";
+import { createContext, useContext, useState, ReactNode } from "react";
+import { AuthUser } from "../types";
+import { store } from "../store/store";
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -33,16 +35,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <Provider store={store}>
+      <AuthContext.Provider
+        value={{
+          user,
+          login,
+          logout,
+          isAuthenticated: !!user,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    </Provider>
   );
 }
 

@@ -9,6 +9,9 @@ import { leadService } from '../services/leadService';
 import { useState } from 'react';
 import IntroHeader from './IntroHeader';
 import { formHeaderInfomationList, countries, visaOptions } from '@/utils/common';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store/store';
+import { createLead } from '../store/features/leadsSlice';
 
 // Styled Components
 const StyledForm = {
@@ -239,6 +242,7 @@ const formSchema = z.object({
 });
 
 export default function LeadForm() {
+  const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -253,9 +257,7 @@ export default function LeadForm() {
   const onSubmit = async (data: LeadFormData) => {
     try {
       setIsSubmitting(true);
-
-      await leadService.createLead(data);
-
+      await dispatch(createLead(data)).unwrap();
       reset();
     } catch (error) {
       console.error('Error submitting form:', error);
