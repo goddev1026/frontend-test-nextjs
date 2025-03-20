@@ -18,6 +18,7 @@ POST /api/leads
   lastName: string;
   email: string;
   citizenship: string;
+  resume: string;
   linkedinProfile: string;
   visasOfInterest: string[];
   additionalInfo?: string;
