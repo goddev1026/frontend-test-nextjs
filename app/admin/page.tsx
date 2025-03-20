@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import LeadManagement from '../components/LeadManagement';
-import LoginForm from '../components/LoginForm';
 
 export default function AdminPage() {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);

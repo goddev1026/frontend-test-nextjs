@@ -1,9 +1,22 @@
 import styled from "styled-components";
 
+// Add breakpoints
+const breakpoints = {
+  sm: "640px",
+  md: "768px",
+  lg: "1024px",
+  xl: "1280px",
+};
+
 export const StyledLeadManagement = {
   Layout: styled.div`
     display: flex;
     min-height: 100vh;
+    position: relative;
+
+    @media (max-width: ${breakpoints.md}) {
+      flex-direction: column;
+    }
   `,
 
   Sidebar: styled.div`
@@ -11,24 +24,45 @@ export const StyledLeadManagement = {
     background-color: #ffffff;
     border-right: 1px solid #e5e7eb;
     padding: 1.5rem;
+    height: 100vh;
+    position: fixed;
+
+    @media (max-width: ${breakpoints.md}) {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem;
+    }
+  `,
+
+  MobileMenuButton: styled.button`
+    display: none;
+
+    @media (max-width: ${breakpoints.md}) {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      margin-left: auto;
+    }
+  `,
+
+  Navigation: styled.div<{ isOpen: boolean }>`
+    @media (max-width: ${breakpoints.md}) {
+      display: ${(props) => (props.isOpen ? "block" : "none")};
+    }
   `,
 
   Logo: styled.div`
     padding: 1rem 0;
     margin-bottom: 2rem;
-  `,
 
-  NavItem: styled.div<{ active?: boolean }>`
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    color: ${(props) => (props.active ? "#111827" : "#6B7280")};
-    background-color: ${(props) => (props.active ? "#F3F4F6" : "transparent")};
-    font-weight: ${(props) => (props.active ? "500" : "normal")};
-
-    &:hover {
-      background-color: #f3f4f6;
+    @media (max-width: ${breakpoints.md}) {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
   `,
 
@@ -36,6 +70,12 @@ export const StyledLeadManagement = {
     flex: 1;
     background-color: #f9fafb;
     padding: 2rem;
+    margin-left: 250px;
+
+    @media (max-width: ${breakpoints.md}) {
+      margin-left: 0;
+      padding: 1rem;
+    }
   `,
 
   Header: styled.div`
@@ -49,13 +89,18 @@ export const StyledLeadManagement = {
   `,
 
   UserSection: styled.div`
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     width: 250px;
     padding: 1rem;
     border-top: 1px solid #e5e7eb;
     background-color: #ffffff;
+
+    @media (max-width: ${breakpoints.md}) {
+      position: static;
+      width: 100%;
+    }
   `,
 
   UserButton: styled.button`
@@ -124,15 +169,41 @@ export const StyledLeadManagement = {
     }
   `,
 
+  TableContainer: styled.div`
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    background-color: #ffffff;
+
+    @media (max-width: ${breakpoints.md}) {
+      border-radius: 0.5rem;
+      margin: 0 -1rem;
+      width: calc(100% + 2rem);
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+    }
+  `,
+
   Table: styled.table`
     width: 100%;
+    min-width: 750px;
     background-color: #ffffff;
-    border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border-collapse: separate;
     border-spacing: 0;
+
+    @media (max-width: ${breakpoints.md}) {
+      border: none;
+    }
   `,
 
   Th: styled.th`
+    position: sticky;
+    top: 0;
+    background-color: #ffffff;
     padding: 0.875rem 1.5rem;
     text-align: left;
     color: #6b7280;
@@ -141,9 +212,26 @@ export const StyledLeadManagement = {
     border-bottom: 1px solid #e5e7eb;
     cursor: pointer;
     white-space: nowrap;
+    z-index: 1;
 
     &:first-child {
       padding-left: 1.5rem;
+    }
+
+    &:last-child {
+      padding-right: 1.5rem;
+    }
+
+    @media (max-width: ${breakpoints.md}) {
+      padding: 0.75rem 1rem;
+
+      &:first-child {
+        padding-left: 1rem;
+      }
+
+      &:last-child {
+        padding-right: 1rem;
+      }
     }
   `,
 
@@ -155,6 +243,22 @@ export const StyledLeadManagement = {
 
     &:first-child {
       padding-left: 1.5rem;
+    }
+
+    &:last-child {
+      padding-right: 1.5rem;
+    }
+
+    @media (max-width: ${breakpoints.md}) {
+      padding: 0.75rem 1rem;
+
+      &:first-child {
+        padding-left: 1rem;
+      }
+
+      &:last-child {
+        padding-right: 1rem;
+      }
     }
   `,
 
@@ -174,6 +278,11 @@ export const StyledLeadManagement = {
     gap: 0.75rem;
     margin-bottom: 1.5rem;
     align-items: center;
+
+    @media (max-width: ${breakpoints.sm}) {
+      flex-direction: column;
+      align-items: stretch;
+    }
   `,
 
   Search: styled.input`
@@ -206,6 +315,11 @@ export const StyledLeadManagement = {
     gap: 0.25rem;
     margin-top: 1.5rem;
     padding: 0 1rem;
+
+    @media (max-width: ${breakpoints.sm}) {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
   `,
 
   PageButton: styled.button<{ active?: boolean }>`
@@ -228,6 +342,40 @@ export const StyledLeadManagement = {
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  `,
+
+  NavigationContainer: styled.nav`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+
+    @media (max-width: ${breakpoints.md}) {
+      margin-bottom: 1rem;
+    }
+  `,
+
+  NavItem: styled.div<{ active: boolean }>`
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: ${(props) => (props.active ? "#111827" : "#6B7280")};
+    background-color: ${(props) => (props.active ? "#F3F4F6" : "transparent")};
+    font-weight: ${(props) => (props.active ? "500" : "normal")};
+    font-size: 0.875rem;
+
+    &:hover {
+      background-color: #f3f4f6;
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
     }
   `,
 };
