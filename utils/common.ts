@@ -208,6 +208,10 @@ export const formHeaderInfomationList = {
     icon: "/help.png",
     title: "How can I help you?",
   },
+  resume: {
+    icon: "/visa.png",
+    title: "Resume/CV",
+  },
 };
 
 export const visaOptions = ["O-1", "EB-1A", "EB-2 NIW", "I don't know"];
