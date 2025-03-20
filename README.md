@@ -24,8 +24,8 @@ A Next.js application for managing immigration visa leads with admin capabilitie
 1. Clone the repository:
 
 ```bash
-git clone [repository-url]
-cd [project-directory]
+git clone https://github.com/goddev1026/frontend-test-nextjs.git
+cd frontend
 ```
 
 2. Install dependencies:
