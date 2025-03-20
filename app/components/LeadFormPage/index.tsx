@@ -21,12 +21,14 @@ const formSchema = z.object({
   citizenship: z.string().min(1, 'Please select your country of citizenship'),
   linkedinProfile: z.string().url('Invalid LinkedIn URL'),
   visasOfInterest: z.array(z.string()).min(1, 'Select at least one visa type'),
+  resume: z.instanceof(File, { message: 'Resume is required' }),
   additionalInfo: z.string().optional(),
 });
 
 export default function LeadForm() {
   const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const router = useRouter();
 
   const {
@@ -34,14 +36,33 @@ export default function LeadForm() {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<LeadFormData>({
     resolver: zodResolver(formSchema),
   });
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setValue('resume', file);
+    }
+  };
+
   const onSubmit = async (data: LeadFormData) => {
     try {
       setIsSubmitting(true);
-      await dispatch(createLead(data)).unwrap();
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === 'resume' && value instanceof File) {
+          formData.append('resume', value);
+        } else if (Array.isArray(value)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value as string);
+        }
+      });
+      await dispatch(createLead(formData)).unwrap();
       router.push('/success');
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -114,6 +135,32 @@ export default function LeadForm() {
             />
             {errors.linkedinProfile && (
               <StyledForm.ErrorMessage>{errors.linkedinProfile.message}</StyledForm.ErrorMessage>
+            )}
+          </StyledForm.Group>
+
+          <StyledForm.Group>
+            <StyledForm.FileUploadContainer>
+              <StyledForm.FileInput
+                type="file"
+                accept=".pdf,.doc,.docx"
+                onChange={handleFileChange}
+                id="resume"
+              />
+              <label htmlFor="resume">
+                {selectedFile ? (
+                  <>
+                    <StyledForm.FileName>{selectedFile.name}</StyledForm.FileName>
+                    <StyledForm.FileUploadText>Click to change file</StyledForm.FileUploadText>
+                  </>
+                ) : (
+                  <StyledForm.FileUploadText>
+                    Drag and drop your resume here or click to browse
+                  </StyledForm.FileUploadText>
+                )}
+              </label>
+            </StyledForm.FileUploadContainer>
+            {errors.resume && (
+              <StyledForm.ErrorMessage>{errors.resume.message}</StyledForm.ErrorMessage>
             )}
           </StyledForm.Group>
         </StyledForm.Section>

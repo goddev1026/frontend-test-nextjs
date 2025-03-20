@@ -22,7 +22,7 @@ export interface LeadFormData {
   citizenship: string;
   linkedinProfile: string;
   visasOfInterest: string[];
-  resume?: File;
+  resume: File;
   additionalInfo?: string;
 }
 

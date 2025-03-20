@@ -3,13 +3,10 @@ import { Lead, LeadFormData } from "@/app/types";
 
 export const createLead = createAsyncThunk(
   "leads/createLead",
-  async (formData: LeadFormData) => {
+  async (formData: FormData) => {
     const response = await fetch("/api/leads", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+      body: formData,
     });
     return response.json();
   }
