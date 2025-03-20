@@ -1,24 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { mockDb } from "@/lib/mockDb";
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Ensure we have the id parameter
-    if (!params?.id) {
+    const { id } = await params;
+
+    if (!id) {
       return NextResponse.json(
         { error: "Lead ID is required" },
         { status: 400 }
       );
     }
 
-    // Parse the request body
     const body = await request.json();
     const { status } = body;
 
-    // Validate status
     if (!status) {
       return NextResponse.json(
         { error: "Status is required" },
@@ -26,8 +25,7 @@ export async function PATCH(
       );
     }
 
-    // Update the lead
-    const lead = await mockDb.updateLead(params.id, status);
+    const lead = await mockDb.updateLead(id, status);
 
     if (!lead) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
