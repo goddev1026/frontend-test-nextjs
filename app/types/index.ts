@@ -11,6 +11,7 @@ export interface Lead {
   additionalInfo?: string;
   status: LeadStatus;
   createdAt: Date;
+  citizenship: string;
   updatedAt: Date;
 }
 

@@ -22,10 +22,10 @@ class MockDatabase {
     );
   }
 
-  async updateLead(id: string, status: Lead["status"]): Promise<Lead> {
+  async updateLead(id: string, status: Lead["status"]): Promise<Lead | null> {
     const leadIndex = this.leads.findIndex((lead) => lead.id === id);
     if (leadIndex === -1) {
-      throw new Error("Lead not found");
+      return null;
     }
 
     this.leads[leadIndex] = {

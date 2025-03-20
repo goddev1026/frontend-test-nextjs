@@ -15,16 +15,23 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    // Check if we have a stored user in localStorage
+    const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const login = async (email: string, password: string) => {
-    // Mock authentication
+    // Mock authentication - you should replace this with real authentication
     if (email === 'admin@example.com' && password === 'admin123') {
-      setUser({
+      const user = {
         id: '1',
         email: 'admin@example.com',
         name: 'Admin User',
-      });
+      };
+      setUser(user);
+      // Store user in localStorage
+      localStorage.setItem('user', JSON.stringify(user));
     } else {
       throw new Error('Invalid credentials');
     }
@@ -32,6 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
+    // Clear user from localStorage
+    localStorage.removeItem('user');
   };
 
   return (

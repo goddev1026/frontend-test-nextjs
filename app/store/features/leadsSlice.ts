@@ -22,15 +22,30 @@ export const fetchLeads = createAsyncThunk("leads/fetchLeads", async () => {
 
 export const updateLeadStatus = createAsyncThunk(
   "leads/updateStatus",
-  async ({ id, status }: { id: string; status: Lead["status"] }) => {
-    const response = await fetch(`/api/leads/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
-    });
-    return response.json();
+  async (
+    { id, status }: { id: string; status: Lead["status"] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await fetch(`/api/leads/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        return rejectWithValue(
+          errorData.error || "Failed to update lead status"
+        );
+      }
+
+      return response.json();
+    } catch (error) {
+      return rejectWithValue("Network error occurred");
+    }
   }
 );
 

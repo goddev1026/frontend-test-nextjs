@@ -12,6 +12,7 @@ import { formHeaderInfomationList, countries, visaOptions } from '@/utils/common
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store/store';
 import { createLead } from '../store/features/leadsSlice';
+import { useRouter } from 'next/navigation';
 
 // Styled Components
 const StyledForm = {
@@ -244,6 +245,7 @@ const formSchema = z.object({
 export default function LeadForm() {
   const dispatch = useDispatch<AppDispatch>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -258,7 +260,7 @@ export default function LeadForm() {
     try {
       setIsSubmitting(true);
       await dispatch(createLead(data)).unwrap();
-      reset();
+      router.push('/success');
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {

@@ -1,71 +1,180 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { login } from '../store/features/authSlice';
+
+const StyledLogin = {
+  Container: styled.div`
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F9FAFB;
+    padding: 1.5rem;
+  `,
+
+  FormContainer: styled.div`
+    max-width: 28rem;
+    width: 100%;
+    background: white;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  `,
+
+  Header: styled.div`
+    text-align: center;
+    margin-bottom: 2rem;
+  `,
+
+  Title: styled.h2`
+    font-size: 1.875rem;
+    font-weight: 600;
+    color: #111827;
+  `,
+
+  Form: styled.form`
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  `,
+
+  Group: styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  `,
+
+  Label: styled.label`
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  `,
+
+  Input: styled.input`
+    width: 100%;
+    padding: 1rem;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    color: #111827;
+    transition: all 0.2s ease;
+    
+    &::placeholder {
+      color: #9CA3AF;
+    }
+    
+    &:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+  `,
+
+  Button: styled.button`
+    width: 100%;
+    padding: 1rem;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: #1a1a1a;
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  `,
+
+  ErrorMessage: styled.div`
+    padding: 1rem;
+    background-color: #FEE2E2;
+    border: 1px solid #FCA5A5;
+    border-radius: 0.75rem;
+    color: #B91C1C;
+    font-size: 0.875rem;
+  `
+};
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { login } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+
+  const { status, error } = useSelector((state: RootState) => state.auth);
+  const isSubmitting = status === 'loading';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
 
     try {
-      await login(email, password);
+      await dispatch(login({ email, password })).unwrap();
+      router.push('/admin'); // Redirect to admin page after successful login
     } catch (err) {
-      setError('Invalid credentials');
+      // Error handling is managed by Redux
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div>
-          <h2 className="text-center text-3xl font-bold">Admin Login</h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <StyledLogin.Container>
+      <StyledLogin.FormContainer>
+        <StyledLogin.Header>
+          <StyledLogin.Title>Admin Login</StyledLogin.Title>
+        </StyledLogin.Header>
+
+        <StyledLogin.Form onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <StyledLogin.ErrorMessage>
               {error}
-            </div>
+            </StyledLogin.ErrorMessage>
           )}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+
+          <StyledLogin.Group>
+            <StyledLogin.Label htmlFor="email">
               Email
-            </label>
-            <input
+            </StyledLogin.Label>
+            <StyledLogin.Input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your email"
             />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          </StyledLogin.Group>
+
+          <StyledLogin.Group>
+            <StyledLogin.Label htmlFor="password">
               Password
-            </label>
-            <input
+            </StyledLogin.Label>
+            <StyledLogin.Input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your password"
             />
-          </div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Sign in
-          </button>
-        </form>
-      </div>
-    </div>
+          </StyledLogin.Group>
+
+          <StyledLogin.Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Signing in...' : 'Sign in'}
+          </StyledLogin.Button>
+        </StyledLogin.Form>
+      </StyledLogin.FormContainer>
+    </StyledLogin.Container>
   );
 } 

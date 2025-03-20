@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../contexts/AuthContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 import LeadManagement from '../components/LeadManagement';
 import LoginForm from '../components/LoginForm';
 
 export default function AdminPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export default function AdminPage() {
   }, [isAuthenticated, router]);
 
   if (!isAuthenticated) {
-    return <LoginForm />;
+    return null; // or a loading spinner
   }
 
   return <LeadManagement />;

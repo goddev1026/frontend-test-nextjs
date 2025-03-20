@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/app/store/store';
-import { fetchLeads, updateLeadStatus } from '@/app/store/features/leadsSlice';
-import { logout } from '@/app/store/features/authSlice';
-import { Lead } from '@/app/types';
-import { StyledLeadManagement as S } from '@/app/components/LeadManagement/styles';
+import { AppDispatch, RootState } from '../../store/store';
+import { fetchLeads, updateLeadStatus } from '../../store/features/leadsSlice';
+import { logout } from '../../store/features/authSlice';
+import { Lead } from '../../types';
+import { StyledLeadManagement as S } from './styles';
 import Image from 'next/image';
 
 export default function LeadManagement() {
@@ -68,8 +68,8 @@ export default function LeadManagement() {
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => {
-      const aValue = a[sortField] as string | number;
-      const bValue = b[sortField] as string | number;
+      const aValue = a[sortField];
+      const bValue = b[sortField];
       const direction = sortDirection === 'asc' ? 1 : -1;
       return aValue < bValue ? -1 * direction : 1 * direction;
     });
@@ -92,10 +92,10 @@ export default function LeadManagement() {
     <S.Layout>
       <S.Sidebar>
         <S.Logo>
-          <Image src="/alma-logo.png" alt="Alma" width={80} height={90} />
+          <Image src="/alma-logo.svg" alt="Alma" width={80} height={32} />
         </S.Logo>
-        <S.NavItem active={true}>Leads</S.NavItem>
-        <S.NavItem active={false}>Settings</S.NavItem>
+        <S.NavItem active>Leads</S.NavItem>
+        <S.NavItem>Settings</S.NavItem>
       </S.Sidebar>
 
       <S.Main>
